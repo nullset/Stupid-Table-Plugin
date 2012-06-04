@@ -65,7 +65,7 @@
     //                  Begin execution!                    //
     // ==================================================== //
     // Do sorting when THs are clicked
-    table.delegate("th", "click", function(){
+    table.find("th").bind("click", function(){
       var trs = table.find("tr").slice(1); // Don't include headers
       var i = $(this).index();
       var classes = $(this).attr("class");
@@ -121,6 +121,7 @@
       // Replace the content of tbody with the sortedTRs. Strangely (and
       // conveniently!) enough, .append accomplishes this for us.
       table.find("tbody").append(sortedTRs);
+      console.log("FINISHED SORTING");
     });
   }
  })(jQuery);

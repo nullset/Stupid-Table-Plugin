@@ -2,10 +2,14 @@
   <head>
     <title>Stupid jQuery table sort</title>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script type="text/javascript" src="stupidtable.min.js?dev"></script>
+    <script type="text/javascript" src="stupidtable.js?dev"></script>
     <script type="text/javascript">
       $(function(){
           $("table").stupidtable();
+          $("table th").bind("click", function(){
+          	// Echo top left cell
+            console.log($("table tbody tr td").eq(0))
+          });
       });
     </script>
     <style type="text/css">
