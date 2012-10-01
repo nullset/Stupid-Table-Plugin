@@ -5,6 +5,17 @@
 (function($){
   $.fn.stupidtable = function(sortFns){
     var table = this; sortFns = sortFns || {};
+    
+    var columns = table.find('.table-data-header li');
+    // Add <a> to all headers to make them consistent
+    columns.each(function() {
+      if ($(this).find('a').length > 0) {
+        $(this).find('a').attr('href', '#');
+      } else {
+        $(this).find('.table-cell-text').wrapInner('<a href="#" />').append('<span class="sortable"></span>');
+      }
+    });
+    
 
     // ==================================================== //
     //                  Utility functions                   //
@@ -19,7 +30,7 @@
 
     // Array comparison. See http://stackoverflow.com/a/8618383
     var arrays_equal = function(a,b) { return !!a && !!b && !(a<b || b<a);}
-    
+
     // Return the resulting indexes of a sort so we can apply
     // this result elsewhere. This returns an array of index numbers.
     // return[0] = x means "arr's 0th element is now at x"
@@ -56,7 +67,7 @@
       var clone = arr.slice(0);
       var reversed = arr.slice(0).reverse();
       var sorted = arr.slice(0).sort(sort_function);
-
+      
       // Check if the array is sorted in either direction.
       return arrays_equal(clone, sorted) || arrays_equal(reversed, sorted);
     }
@@ -65,8 +76,23 @@
     //                  Begin execution!                    //
     // ==================================================== //
     // Do sorting when THs are clicked
-    table.delegate("th", "click", function(){
-      var trs = table.find("tbody tr");
+    table.delegate(".table-data-header li", "click", function(){
+      var trs = table.find("ul.table-data-row");
+      
+      // Add sort arrow
+      var sortCol = $(this).find('.table-cell-text .sortable');
+      columns.find('.table-cell-text .sortable').each(function() {
+        if ($(this)[0] != sortCol[0]) {
+          $(this).removeClass('asc').removeClass('desc');
+        } else {
+          if (sortCol.hasClass('asc')) {
+            sortCol.removeClass('asc').addClass('desc');
+          } else {
+            sortCol.removeClass('desc').addClass('asc');
+          }
+        }
+      });
+      
       var i = $(this).index();
       var classes = $(this).attr("class");
       var type = null;
@@ -93,7 +119,7 @@
         // or just the text() value in this column to column[] for comparison.
         trs.each(function(index,tr){
           var e = $(tr).children().eq(i);
-          var order_by = e.attr('data-order-by') || e.text();
+          var order_by = e.attr('data-order-by') || e.text().toLowerCase();
           column.push(order_by);
         });
 
@@ -115,7 +141,7 @@
 
         // Replace the content of tbody with the sortedTRs. Strangely (and
         // conveniently!) enough, .append accomplishes this for us.
-        table.find("tbody").append(sortedTRs);
+        table.find(".table-scroll").append(sortedTRs);
       }
     });
   }
